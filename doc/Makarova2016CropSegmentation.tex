@@ -1,0 +1,81 @@
+\documentclass[12pt,a4paper,notitlepage]{amsart}
+\usepackage{abstract}
+\usepackage{a4wide}
+%\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,mathrsfs,mathtext}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{epstopdf}
+\usepackage{cite}
+\usepackage{hyperref}
+
+
+\usepackage[svgnames]{xcolor}
+\newcommand{\myparagraph}[1]{{\textbf{#1}}}
+\newcommand{\myemph}[2][ForestGreen]{\textcolor{#1}{\textbf{#2}}}
+
+
+\begin{document}
+	\title{Deep Learning UASs for High-Throughput
+Agricultural Disease Phenotyping}
+	\author{Anastasia Makarova}
+	\date{\today}
+	
+	\maketitle
+	
+	\begin{abstract} 
+Motivation of the problem lays in the field of crop disease phenotyping, where based on the images collected by drones it is needed to automatically define the location and level of the crop lesion. In the previous paper the binary problem of lesion presence was solved but without any solution for measuring the affected area. The goal of the project is to adjust existing and create new segmentation methods for this problem to estimate a level of lesion. Such segmentation methods should address the challenges of limited data, week annotations and myriad irregularities that appear in images of plants in the field.
+	
+	Keywords: weekly-supervised segmentation, crop diseases.
+	\end{abstract}
+
+
+   \section{Introduction}    
+   
+   TODO
+   
+   \section{Related work}
+   
+	The Basic ideas of Deep Learning applications for Image-Based Plant Dis-
+ease Detection are described in \cite{sharada2016plants}. For experiments rhe authors use AlexNet and GoogleLeNet applied to PlantVillage dataset. 
+
+Going closer to the segmentation problem paper \cite{kolesnikov2016} consider the problem of weekly supervised semantic image segmentation from image-level labels. The authors suggest a  three component loss which partly deals with boundaries over- and underestimating.
+
+\begin{itemize}
+	\item Seeding loss: encouradge a a segmentation network to match localization cues but that is agnostic about the rest of the image, provides the localization hints to the neural network
+
+	\item Expansion loss: global weighted rank tends helps to avoid underestimating (GMP) and overestimate (GAP) of size
+
+     (We can introduce the decay parameter that could be individual for each class and image, but for simplicity we can use three types of decay during train: for classes that don't present on the image, for classes that present, and background)
+
+	\item Constrains to boundary loss: alleviates the problem of  imprecise boundaries at training time. (Before condition random fields were used on the testing step, when the trained nn is tend to be confident about misclassified regions ?) Encourage segmentations that respects the spatial and color stucture of the image
+\end{itemize}
+
+      
+   
+   
+   \section{Problem statement}
+      
+   \section{Datasets}
+   
+   \subsection{Manually Collected Data}
+     
+   \subsection{Boom data}
+   
+   \section{End-to-end pipeline ideas}
+   
+   
+   \section{Experiments}
+   Ongoing experiments
+   
+   \section{Results}
+   Current results   
+   
+   \section{Discussion}   
+   In the SEC paper they do have certain segmentation on validation set. Seems that we should create it   
+   
+\nocite{*}
+\bibliographystyle{unsrt}
+\bibliography{References}  
+   
+\end{document}
