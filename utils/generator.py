@@ -1,6 +1,7 @@
 import numpy as np
 import Queue
 import threading
+import matplotlib.pyplot as plt
 
 
 def batch_generator(data, target, batch_size, random_seed=None):
@@ -9,6 +10,7 @@ def batch_generator(data, target, batch_size, random_seed=None):
     generates sets of data (data_batch, target_batch) of size batch_size.
 
     :param data: np.array of images
+    :param: target: np.array of binary images
     :param batch_size: int, sizeof batch
     :param random_seed: random seed
     :return: data_batch: data sequence of batch_size
@@ -18,6 +20,36 @@ def batch_generator(data, target, batch_size, random_seed=None):
     while True:
         idxs = np.random.randint(0, data.shape[0], batch_size)
         yield data[idxs], target[idxs]
+
+
+def batch_generator_from_paths(data_paths, target_paths, batch_size, random_seed=None):
+    """
+    Having np.array of images and corresponding target on the each image
+    generates sets of data (data_batch, target_batch) of size batch_size.
+
+    :param data_paths: list of paths to images
+    :param target_paths: list of path to corresponded targets
+    :param batch_size: int, sizeof batch
+    :param random_seed: random seed
+    :return: data_batch: data sequence of batch_size
+             target_batch: data sequence of batch_size
+    """
+    np.random.seed(seed=random_seed)
+    if len(data_paths) != len(target_paths):
+        raise ValueError("Inconsistent lists of data paths and targets paths")
+
+    img_data_size = plt.imread(data_paths[0])
+    img_target_size = plt.imread(target_paths[0])
+
+    while True:
+        data = np.zeros((batch_size, 3, img_data_size[0], img_data_size[1]), dtype=np.uint8)
+        target = np.zeros((batch_size, 1, img_target_size[0], img_target_size[1]), dtype=np.uint8)
+        idxs = np.random.randint(0, len(data_paths), batch_size)
+        for i, idx in enumerate(idxs):
+            im, gt_im = data_paths[idx], target_paths[idx]
+            data[i] = plt.imread(im).transpose((2, 0, 1))
+            target[i, 0] = plt.imread(gt_im, 0) / 256.
+        yield data, target
 
 
 def iterate_over(generator, n_batches):
