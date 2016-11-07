@@ -98,9 +98,7 @@ def random_crop_generator(generator, crop_size=(128, 128), target_crop_size=None
         if target_crop_size != crop_size:
             width, height = crop_size[0], crop_size[1]
             new_width, new_height = target_crop_size[0], target_crop_size[1]
-            ## TODO: debus type checker
-            if new_width or new_height not in (integer):
-                raise ValueError('invalid type for target_crop_size elements')
+            # TODO: add integer check
             left = (width - new_width) // 2
             top = (height - new_height) // 2
             right = (width + new_width) // 2
