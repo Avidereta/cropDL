@@ -38,8 +38,8 @@ def batch_generator_from_paths(data_paths, target_paths, batch_size, random_seed
     if len(data_paths) != len(target_paths):
         raise ValueError("Inconsistent lists of data paths and targets paths")
 
-    img_data_size = plt.imread(data_paths[0])
-    img_target_size = plt.imread(target_paths[0])
+    img_data_size = plt.imread(data_paths[0]).shape
+    img_target_size = plt.imread(target_paths[0]).shape
 
     while True:
         data = np.zeros((batch_size, 3, img_data_size[0], img_data_size[1]), dtype=np.uint8)
