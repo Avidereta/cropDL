@@ -57,7 +57,7 @@ def iterate_over(generator, n_batches):
         yield generator.next()
 
 
-def random_crop_generator(generator, crop_size=(128, 128), target_crop_size=None,
+def random_crop_generator(generator, crop_size=(128, 128), target_crop_size=None, random_seed=None,
                           info=False, bin_threshold=0.5, info_threshold=0.05):
     """
     Yields a random crop of batch produces by generator
@@ -65,13 +65,14 @@ def random_crop_generator(generator, crop_size=(128, 128), target_crop_size=None
     :param crop_size: tuple, list of int or int with desired size of data
     :param target_crop_size: tuple, list of int or int with desired size of target
     None if the desired size for target and crop_size for data are the same
+    :param random_seed: random seed
     :param info: bool, whether to generate or not batches of with certain percentage of
     elements larger than bin_threshold
     :param bin_threshold: float, if info is True: threshold for dividing elements into 2 groups
     :param info_threshold: float, if info is True: percentage of elements larger than bin_threshold
     :return: yields batch of data and target pairs
     """
-    np.random.seed()
+    np.random.seed(seed=random_seed)
     if type(crop_size) not in (tuple, list):
         crop_size = [crop_size, crop_size]
     elif len(crop_size) == 2:
