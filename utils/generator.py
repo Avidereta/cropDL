@@ -3,25 +3,6 @@ import Queue
 import threading
 import matplotlib.pyplot as plt
 
-
-def batch_generator(data, target, batch_size, random_seed=None):
-    """
-    Having np.array of images and corresponding target on the each image
-    generates sets of data (data_batch, target_batch) of size batch_size.
-
-    :param data: np.array of images
-    :param: target: np.array of binary images
-    :param batch_size: int, sizeof batch
-    :param random_seed: random seed
-    :return: data_batch: data sequence of batch_size
-             target_batch: data sequence of batch_size
-    """
-    np.random.seed(seed=random_seed)
-    while True:
-        idxs = np.random.randint(0, data.shape[0], batch_size)
-        yield data[idxs], target[idxs]
-
-
 def batch_generator_from_paths(data_paths, target_paths, batch_size, random_seed=None):
     """
     Having np.array of images and corresponding target on the each image
@@ -40,25 +21,24 @@ def batch_generator_from_paths(data_paths, target_paths, batch_size, random_seed
 
     img_data_size = plt.imread(data_paths[0]).shape
     img_target_size = plt.imread(target_paths[0]).shape
-
+    
+    i=0
     while True:
+#         print 'batch_generator_from_paths %d'%i
         data = np.zeros((batch_size, 3, img_data_size[0], img_data_size[1]), dtype=np.uint8)
         target = np.zeros((batch_size, 1, img_target_size[0], img_target_size[1]), dtype=np.uint8)
         idxs = np.random.randint(0, len(data_paths), batch_size)
         for i, idx in enumerate(idxs):
             im, gt_im = data_paths[idx], target_paths[idx]
             data[i] = plt.imread(im).transpose((2, 0, 1))
-            target[i, 0] = plt.imread(gt_im, 0) / 256.
+            target_img = plt.imread(gt_im, 0)
+#             print 'target_img max',np.max(target_img), np.min(target_img)
+            target[i, 0] = target_img/np.max(target_img)
+        i+=1
         yield data, target
 
-
-def iterate_over(generator, n_batches):
-    for i in range(n_batches):
-        yield generator.next()
-
-
 def random_crop_generator(generator, crop_size=(128, 128), target_crop_size=None, random_seed=None,
-                          info=False, bin_threshold=0.5, info_threshold=0.05):
+                          info=False, bin_threshold=0.5, info_threshold=0.005):
     """
     Yields a random crop of batch produces by generator
     :param generator: batch generator which yields batch of pairs data and target
@@ -106,39 +86,10 @@ def random_crop_generator(generator, crop_size=(128, 128), target_crop_size=None
             target = target[:, :, left:right, top:bottom]
         if info:
             info_percent = np.sum(bin_threshold < target) * 1. / np.size(target.ravel())
+#             print 'random_crop_generator info_percent %.5f'%info_percent
             if info_percent > info_threshold:
                 yield data, target
             else:
                 pass
         else:
             yield data, target
-
-
-def threaded_generator(generator, num_cached=10):
-    """
-    generates batches in advance
-    :param generator: generator to use
-    :param num_cached: int, number of batches to cache from one iteration
-    :return:
-    """
-
-    queue = Queue.Queue(maxsize=num_cached)
-    sentinel = object()  # guaranteed unique reference
-
-    # define producer (putting items into queue)
-    def producer():
-        for item in generator:
-            queue.put(item)
-        queue.put(sentinel)
-
-    # start producer (in a background thread)
-    thread = threading.Thread(target=producer)
-    thread.daemon = True
-    thread.start()
-
-    # run as consumer (read items from queue, in current thread)
-    item = queue.get()
-    while item is not sentinel:
-        yield item
-        queue.task_done()
-        item = queue.get()
