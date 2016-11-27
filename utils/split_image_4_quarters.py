@@ -1,3 +1,5 @@
+""" Function related to images preprocessing """
+
 import os
 import cv2
 import itertools

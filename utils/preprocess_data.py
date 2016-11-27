@@ -1,8 +1,13 @@
+"""
+All work related to segments processing
+"""
+
 from math import hypot
 import itertools
 import pandas
-# TODO: correct the case of collinearity!
 
+
+# TODO: correct the case of collinearity!
 class Segment(object):
     """ Create a new Segment, at coordinates x1, y1 and x2, y2 """
 
@@ -98,7 +103,7 @@ def count_lesions_nmb(segments_list, default_coord=(0, 0, 0, 0)):
 
 def extract_segmnets(ann_path):
     """
-    Extracts Segmnets from annotation file
+    Extracts Segments from annotation file
     :param ann_path: path to .csv file with annotations
     :return: list of Segments
     """

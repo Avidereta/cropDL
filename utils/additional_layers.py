@@ -1,3 +1,7 @@
+"""
+My lasagne layers
+"""
+
 import lasagne
 import theano.tensor as T
 

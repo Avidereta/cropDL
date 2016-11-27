@@ -1,3 +1,7 @@
+""" 
+Function related to images preprocessing 
+"""
+
 from collections import namedtuple
 
 Sample = namedtuple('Sample', ['ann_path', 'img_path'])
